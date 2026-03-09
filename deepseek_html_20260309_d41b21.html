@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App de Ventas - Cafetería</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        h1, h2 { color: #2c3e50; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        select, input, button { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #27ae60; color: white; border: none; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        button:hover { background: #2ecc71; }
+        .admin-section { margin-top: 40px; border-top: 2px solid #ccc; padding-top: 20px; }
+        .admin-login { background: #ecf0f1; padding: 15px; border-radius: 4px; }
+        .admin-panel { background: #ecf0f1; padding: 15px; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #bdc3c7; padding: 8px; text-align: left; }
+        th { background: #34495e; color: white; }
+        .total-row { font-weight: bold; background: #d5dbdb; }
+        .reset-btn { background: #e74c3c; }
+        .reset-btn:hover { background: #c0392b; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 4px; display: none; }
+        .success { background: #d4edda; color: #155724; display: block; }
+        .error { background: #f8d7da; color: #721c24; display: block; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🍹 Registro de Ventas - Cafetería</h1>
+
+    <!-- Sección empleada -->
+    <h2>Registrar venta</h2>
+    <div class="form-group">
+        <label for="categoria">Categoría:</label>
+        <select id="categoria" onchange="cargarProductos()">
+            <option value="">-- Selecciona categoría --</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="producto">Producto:</label>
+        <select id="producto">
+            <option value="">-- Primero elige categoría --</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" id="cantidad" min="1" value="1">
+    </div>
+    <button onclick="registrarVenta()">Registrar venta</button>
+    <div id="mensaje" class="message"></div>
+
+    <!-- Sección administrador (requiere login) -->
+    <div class="admin-section">
+        <h2>Administración</h2>
+        <div id="adminLogin" class="admin-login">
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" placeholder="Ingresa contraseña">
+            <button onclick="loginAdmin()">Ingresar</button>
+        </div>
+        <div id="adminPanel" class="admin-panel" style="display:none;">
+            <h3>Ventas por producto</h3>
+            <button onclick="cerrarSesion()" style="background:#7f8c8d;">Cerrar sesión</button>
+            <button class="reset-btn" onclick="reiniciarVentas()" style="margin-left:10px;">Reiniciar ventas</button>
+            <div id="resumenVentas"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // PRODUCTOS (extraídos de tu archivo Excel)
+    // --------------------------------------------------------------
+    const productos = [
+        // SMOOTHIES TROPICALES
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Cítrico Sin Miedo", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Cítrico Sin Miedo", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Atrevido", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Atrevido", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Buen Provecho", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Buen Provecho", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Cariñito", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Cariñito", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Enamorao", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Enamorao", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Madrugador", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Madrugador", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Suavecito", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Suavecito", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Golpe de Sol", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Golpe de Sol", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Apaga Calor", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Apaga Calor", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Finca Limpia", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Finca Limpia", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Fresquita del Patio", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Fresquita del Patio", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Refrescosa", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Refrescosa", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Tentación", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Tentación", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Sol de Mediodía", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Sol de Mediodía", tamaño: "16", precio: 150 },
+
+        // TROPICALES Agua de coco
+        { categoria: "TROPICALES Agua de coco", nombre: "Cítrico Sin Miedo", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "Cítrico Sin Miedo", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Atrevido", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Atrevido", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Buen Provecho", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Buen Provecho", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Cariñito", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Cariñito", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Enamorao", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Enamorao", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Madrugador", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Madrugador", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Suavecito", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Suavecito", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "Golpe de Sol", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "Golpe de Sol", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Apaga Calor", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Apaga Calor", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Finca Limpia", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Finca Limpia", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Fresquita del Patio", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Fresquita del Patio", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Refrescosa", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Refrescosa", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Tentación", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Tentación", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "Sol de Mediodía", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "Sol de Mediodía", tamaño: "16", precio: 180 },
+
+        // MILKSHAKES
+        { categoria: "MILKSHAKES", nombre: "El Calorón", tamaño: "16 oz", precio: 300 },
+        { categoria: "MILKSHAKES", nombre: "El Calorón", tamaño: "12 oz", precio: 260 },
+        { categoria: "MILKSHAKES", nombre: "El niño grande", tamaño: "16 oz", precio: 300 },
+        { categoria: "MILKSHAKES", nombre: "El niño grande", tamaño: "12 oz", precio: 260 },
+        { categoria: "Choco Shake", nombre: "El Despierta Muerto", tamaño: "16 oz", precio: 350 },
+        { categoria: "Choco Shake", nombre: "El Despierta Muerto", tamaño: "12 oz", precio: 300 },
+        { categoria: "Choco Shake", nombre: "El Fresco Oscuro", tamaño: "16 oz", precio: 350 },
+        { categoria: "Choco Shake", nombre: "El Fresco Oscuro", tamaño: "12 oz", precio: 300 },
+        { categoria: "MILKSHAKES", nombre: "El Fuerte", tamaño: "16 oz", precio: 300 },
+        { categoria: "MILKSHAKES", nombre: "El Fuerte", tamaño: "12 oz", precio: 260 },
+        { categoria: "Choco Banano", nombre: "El Resuelve", tamaño: "16 oz", precio: 300 },
+        { categoria: "Choco Banano", nombre: "El Resuelve", tamaño: "12 oz", precio: 260 },
+        { categoria: "MILKSHAKES", nombre: "El Tropicalón", tamaño: "16 oz", precio: 300 },
+        { categoria: "MILKSHAKES", nombre: "El Tropicalón", tamaño: "12 oz", precio: 260 },
+        { categoria: "MILKSHAKES", nombre: "La Piñita Sabrosa", tamaño: "16 oz", precio: 300 },
+        { categoria: "MILKSHAKES", nombre: "La Piñita Sabrosa", tamaño: "12 oz", precio: 260 },
+        { categoria: "MILKSHAKES", nombre: "La Playa de Lejos", tamaño: "16 oz", precio: 300 },
+        { categoria: "MILKSHAKES", nombre: "La Playa de Lejos", tamaño: "12 oz", precio: 260 },
+        { categoria: "MILKSHAKES", nombre: "La Rosada Fina", tamaño: "16 oz", precio: 300 },
+        { categoria: "MILKSHAKES", nombre: "La Rosada Fina", tamaño: "12 oz", precio: 260 },
+        { categoria: "MILKSHAKES", nombre: "La Travesura", tamaño: "16 oz", precio: 300 },
+        { categoria: "MILKSHAKES", nombre: "La Travesura", tamaño: "12 oz", precio: 260 },
+
+        // BATIDOS FUNCIONALES
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Agrónomo Jr.", tamaño: "16 oz", precio: 250 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Agrónomo Jr.", tamaño: "12 oz", precio: 170 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Corre Corazón", tamaño: "16 oz", precio: 250 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Corre Corazón", tamaño: "12 oz", precio: 170 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Cuidao", tamaño: "16 oz", precio: 250 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Cuidao", tamaño: "12 oz", precio: 170 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Defiende", tamaño: "16 oz", precio: 250 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Defiende", tamaño: "12 oz", precio: 170 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Enfocao", tamaño: "16 oz", precio: 250 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Enfocao", tamaño: "12 oz", precio: 170 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Levanta culo", tamaño: "16 oz", precio: 250 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Levanta culo", tamaño: "12 oz", precio: 170 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Saciao", tamaño: "16 oz", precio: 250 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "El Saciao", tamaño: "12 oz", precio: 170 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "La Limpieza", tamaño: "16 oz", precio: 250 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "La Limpieza", tamaño: "12 oz", precio: 170 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "La Tranquila", tamaño: "16 oz", precio: 250 },
+        { categoria: "BATIDOS FUNCIONALES", nombre: "La Tranquila", tamaño: "12 oz", precio: 170 },
+
+        // BEBIDAS ALCOHOLICA
+        { categoria: "BEBIDAS ALCOHOLICA", nombre: "El Agrónomo", tamaño: "12 oz", precio: 250 },
+        { categoria: "BEBIDAS ALCOHOLICA", nombre: "El prepa", tamaño: "12 oz", precio: 250 },
+        { categoria: "BEBIDAS ALCOHOLICA", nombre: "Fresa Picante", tamaño: "12 oz", precio: 300 },
+        { categoria: "BEBIDAS ALCOHOLICA", nombre: "El apechao", tamaño: "12 oz", precio: 250 },
+        { categoria: "BEBIDAS ALCOHOLICA", nombre: "Sandía fuego", tamaño: "12 oz", precio: 250 },
+        { categoria: "BEBIDAS ALCOHOLICA", nombre: "Piñacoloco", tamaño: "12 oz", precio: 250 },
+
+        // BATIDOS CON YOGURT / HELADO
+        { categoria: "BATIDOS CON YOGURT / HELADO", nombre: "El Consentido", tamaño: "16 oz", precio: 280 },
+        { categoria: "BATIDOS CON YOGURT / HELADO", nombre: "El Consentido", tamaño: "12 oz", precio: 250 },
+        { categoria: "BATIDOS CON YOGURT / HELADO", nombre: "El Monte Frío", tamaño: "16 oz", precio: 280 },
+        { categoria: "BATIDOS CON YOGURT / HELADO", nombre: "El Monte Frío", tamaño: "12 oz", precio: 250 },
+        { categoria: "BATIDOS CON YOGURT / HELADO", nombre: "La Dulzura del Campo", tamaño: "16 oz", precio: 280 },
+        { categoria: "BATIDOS CON YOGURT / HELADO", nombre: "La Dulzura del Campo", tamaño: "12 oz", precio: 250 },
+        { categoria: "BATIDOS CON YOGURT / HELADO", nombre: "La Rosita", tamaño: "16 oz", precio: 280 },
+        { categoria: "BATIDOS CON YOGURT / HELADO", nombre: "La Rosita", tamaño: "12 oz", precio: 250 },
+        { categoria: "BATIDOS CON YOGURT / HELADO", nombre: "La Verde Loca", tamaño: "16 oz", precio: 280 },
+        { categoria: "BATIDOS CON YOGURT / HELADO", nombre: "La Verde Loca", tamaño: "12 oz", precio: 250 },
+
+        // CAFÉ
+        { categoria: "CAFÉ", nombre: "CAFÉ", tamaño: "6 0z", precio: 25 },
+        { categoria: "CAFÉ", nombre: "CAFÉ", tamaño: "4 0z", precio: 20 },
+
+        // TOSTADAS / SÁNDWICH
+        { categoria: "TOSTADAS / SÁNDWICH", nombre: "El Agrónomo", tamaño: "/", precio: 65 },
+        { categoria: "TOSTADAS / SÁNDWICH", nombre: "La Clásica del Colmado", tamaño: "/", precio: 55 },
+
+        // Quipe
+        { categoria: "Quipe", nombre: "El Campesino", tamaño: "/", precio: 45 },
+
+        // Pastelitos
+        { categoria: "Pastelitos 1", nombre: "Caribeño Sabroso", tamaño: "/", precio: 35 },
+        { categoria: "Pastelitos 2", nombre: "Caribeño Sabroso", tamaño: "/", precio: 35 },
+        { categoria: "Pastelitos 3", nombre: "Caribeño Sabroso", tamaño: "/", precio: 35 },
+
+        // Ensaladas (solo las que tienen precio)
+        { categoria: "Ensaladas", nombre: "BERRY TROPICANA", tamaño: "250", precio: 100 },
+        { categoria: "Ensaladas", nombre: "FRESCURA CARIBEÑA", tamaño: "250", precio: 100 },
+        { categoria: "Ensaladas", nombre: "TROPICAL DOMINICANAZA", tamaño: "340", precio: 100 },
+
+        // Helado
+        { categoria: "Helado", nombre: "Vainilla Verde", tamaño: "/", precio: 50 },
+        { categoria: "Helado", nombre: "Chocolate oscuro", tamaño: "/", precio: 50 },
+        { categoria: "Helado", nombre: "Café del patio", tamaño: "/", precio: 50 },
+        { categoria: "Helado", nombre: "CTC", tamaño: "/", precio: 50 },
+        { categoria: "Helado", nombre: "SG", tamaño: "/", precio: 50 },
+        { categoria: "Helado", nombre: "LCH", tamaño: "/", precio: 50 },
+
+        // Helado con alcohol
+        { categoria: "Helado con alcohol", nombre: "Piñacoloco", tamaño: "/", precio: 80 },
+        { categoria: "Helado con alcohol", nombre: "Mojito", tamaño: "/", precio: 80 },
+        { categoria: "Helado con alcohol", nombre: "Fresa Brava", tamaño: "/", precio: 80 },
+        { categoria: "Helado con alcohol", nombre: "Chinola Power", tamaño: "/", precio: 80 },
+        { categoria: "Helado con alcohol", nombre: "Sandía picante", tamaño: "/", precio: 80 },
+
+        // Postres
+        { categoria: "Postres", nombre: "Brownies", tamaño: "/", precio: 60 },
+        { categoria: "Postres", nombre: "Croissants", tamaño: "/", precio: 20 },
+        { categoria: "Postres", nombre: "Pie", tamaño: "/", precio: 50 },
+        { categoria: "Postres", nombre: "Galletas", tamaño: "/", precio: 30 },
+        { categoria: "Postres", nombre: "Donas", tamaño: "/", precio: 45 },
+        { categoria: "Postres", nombre: "Cupcakes", tamaño: "/", precio: 40 },
+
+        // Jugo
+        { categoria: "Jugo", nombre: "Naranja", tamaño: "12 oz", precio: 75 },
+
+        // Salsas
+        { categoria: "Salsa", nombre: "Salsa de ajo", tamaño: "/", precio: 15 },
+        { categoria: "Salsa", nombre: "Salsa tártara", tamaño: "/", precio: 10 },
+
+        // Postre especial
+        { categoria: "Postre", nombre: "Fresas de la finca", tamaño: "/", precio: 170 }
+    ];
+
+    // --------------------------------------------------------------
+    // FUNCIONES PRINCIPALES
+    // --------------------------------------------------------------
+    const STORAGE_KEY = 'cafeteria_ventas';
+
+    // Cargar categorías al iniciar
+    window.onload = function() {
+        const categorias = [...new Set(productos.map(p => p.categoria))].sort();
+        const selectCategoria = document.getElementById('categoria');
+        categorias.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat;
+            selectCategoria.appendChild(option);
+        });
+        actualizarResumenAdmin(); // por si ya hay ventas guardadas
+    };
+
+    // Cargar productos según categoría seleccionada
+    function cargarProductos() {
+        const categoria = document.getElementById('categoria').value;
+        const selectProducto = document.getElementById('producto');
+        selectProducto.innerHTML = '<option value="">-- Selecciona producto --</option>';
+        if (!categoria) return;
+
+        const filtrados = productos.filter(p => p.categoria === categoria);
+        filtrados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        filtrados.forEach(p => {
+            const option = document.createElement('option');
+            option.value = JSON.stringify({ nombre: p.nombre, tamaño: p.tamaño, precio: p.precio });
+            option.textContent = `${p.nombre} (${p.tamaño}) - $${p.precio}`;
+            selectProducto.appendChild(option);
+        });
+    }
+
+    // Registrar una venta
+    function registrarVenta() {
+        const categoria = document.getElementById('categoria').value;
+        const productoSelect = document.getElementById('producto');
+        const cantidad = parseInt(document.getElementById('cantidad').value);
+        const mensajeDiv = document.getElementById('mensaje');
+
+        if (!categoria) {
+            mostrarMensaje('Debes seleccionar una categoría', 'error');
+            return;
+        }
+        if (!productoSelect.value) {
+            mostrarMensaje('Debes seleccionar un producto', 'error');
+            return;
+        }
+        if (isNaN(cantidad) || cantidad < 1) {
+            mostrarMensaje('Cantidad no válida', 'error');
+            return;
+        }
+
+        const producto = JSON.parse(productoSelect.value);
+        const venta = {
+            producto: {
+                categoria: categoria,
+                nombre: producto.nombre,
+                tamaño: producto.tamaño,
+                precio: producto.precio
+            },
+            cantidad: cantidad,
+            timestamp: new Date().toISOString()
+        };
+
+        let ventas = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        ventas.push(venta);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(ventas));
+
+        mostrarMensaje('Venta registrada correctamente', 'success');
+        document.getElementById('cantidad').value = 1;
+        if (document.getElementById('adminPanel').style.display === 'block') {
+            actualizarResumenAdmin();
+        }
+    }
+
+    function mostrarMensaje(texto, tipo) {
+        const mensajeDiv = document.getElementById('mensaje');
+        mensajeDiv.textContent = texto;
+        mensajeDiv.className = `message ${tipo}`;
+        setTimeout(() => {
+            mensajeDiv.style.display = 'none';
+        }, 3000);
+    }
+
+    // --------------------------------------------------------------
+    // ADMINISTRACIÓN
+    // --------------------------------------------------------------
+    const ADMIN_PASSWORD = 'admin123'; // Cambia aquí la contraseña
+
+    function loginAdmin() {
+        const pwd = document.getElementById('password').value;
+        if (pwd === ADMIN_PASSWORD) {
+            document.getElementById('adminLogin').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            actualizarResumenAdmin();
+        } else {
+            alert('Contraseña incorrecta');
+        }
+    }
+
+    function cerrarSesion() {
+        document.getElementById('adminLogin').style.display = 'block';
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('password').value = '';
+    }
+
+    function actualizarResumenAdmin() {
+        const ventas = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        const resumen = {};
+
+        ventas.forEach(v => {
+            const key = `${v.producto.categoria}|${v.producto.nombre}|${v.producto.tamaño}`;
+            if (!resumen[key]) {
+                resumen[key] = {
+                    categoria: v.producto.categoria,
+                    nombre: v.producto.nombre,
+                    tamaño: v.producto.tamaño,
+                    precio: v.producto.precio,
+                    cantidad: 0,
+                    ingreso: 0
+                };
+            }
+            resumen[key].cantidad += v.cantidad;
+            resumen[key].ingreso += v.cantidad * v.producto.precio;
+        });
+
+        let html = '<table><tr><th>Categoría</th><th>Producto</th><th>Tamaño</th><th>Precio</th><th>Cantidad vendida</th><th>Ingreso total</th></tr>';
+        let totalGeneral = 0;
+        const sorted = Object.values(resumen).sort((a, b) => a.categoria.localeCompare(b.categoria));
+        sorted.forEach(item => {
+            html += `<tr>
+                <td>${item.categoria}</td>
+                <td>${item.nombre}</td>
+                <td>${item.tamaño}</td>
+                <td>$${item.precio.toFixed(2)}</td>
+                <td>${item.cantidad}</td>
+                <td>$${item.ingreso.toFixed(2)}</td>
+            </tr>`;
+            totalGeneral += item.ingreso;
+        });
+        html += `<tr class="total-row"><td colspan="5">TOTAL GENERAL</td><td>$${totalGeneral.toFixed(2)}</td></tr>`;
+        html += '</table>';
+        document.getElementById('resumenVentas').innerHTML = html;
+    }
+
+    function reiniciarVentas() {
+        if (confirm('¿Estás seguro de eliminar todas las ventas registradas?')) {
+            localStorage.removeItem(STORAGE_KEY);
+            actualizarResumenAdmin();
+            alert('Ventas reiniciadas');
+        }
+    }
+</script>
+</body>
+</html>
