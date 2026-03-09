@@ -3,172 +3,468 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cafetería - Registro de Ventas</title>
+    <title>Sistema de Ventas - Tropifrescura</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
-        body { background: #f5f3f0; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
-        .app-container { max-width: 1000px; width: 100%; background: white; border-radius: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; }
-        .header { background: #2b1b0e; color: #f9e0b0; padding: 24px 32px; }
-        .header h1 { margin: 0; font-weight: 500; font-size: 2rem; letter-spacing: 1px; }
-        .header p { margin: 8px 0 0; opacity: 0.8; }
-        .main { padding: 32px; }
-        .seccion-empleado { background: #fefcf7; border-radius: 24px; padding: 24px; box-shadow: inset 0 1px 4px #ddd; }
-        h2 { margin-top: 0; color: #5a3e2b; font-weight: 500; border-left: 6px solid #c49a6c; padding-left: 16px; }
-        .form-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
-        .form-group { flex: 1 1 200px; }
-        label { display: block; margin-bottom: 6px; font-weight: 600; color: #3e2c1c; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        select, input, button { width: 100%; padding: 12px 16px; border: 1px solid #d6c6b2; border-radius: 40px; font-size: 1rem; background: white; transition: 0.2s; }
-        select:focus, input:focus { outline: none; border-color: #b37b4c; box-shadow: 0 0 0 3px rgba(179,123,76,0.2); }
-        button { background: #5a3e2b; color: white; font-weight: 600; border: none; cursor: pointer; }
-        button:hover { background: #7a5a42; }
-        .btn-registrar { background: #2b7a4b; }
-        .btn-registrar:hover { background: #3e9e62; }
-        .mensaje { margin-top: 16px; padding: 12px; border-radius: 40px; display: none; }
-        .mensaje.success { background: #dff0d8; color: #2b5e2b; display: block; }
-        .mensaje.error { background: #f2dede; color: #a63a3a; display: block; }
-        hr { border: none; border-top: 2px dashed #d6c6b2; margin: 40px 0; }
-        .admin-login, .admin-panel { background: #f2ede7; border-radius: 24px; padding: 24px; }
-        .admin-panel { background: #e7dfd5; }
-        .flex-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        th { background: #8b6f4c; color: white; font-weight: 600; padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #ddd; }
-        tr:last-child td { border-bottom: none; }
-        .total-row { background: #d4c3aa; font-weight: bold; }
-        .btn-cierre { background: #7f8c8d; }
-        .btn-reset { background: #c44536; }
-        .btn-reset:hover { background: #a53527; }
-        .oculto { display: none; }
+        :root {
+            --color-primary: #27ae60;
+            --color-primary-hover: #2ecc71;
+            --color-danger: #e74c3c;
+            --color-danger-hover: #c0392b;
+            --color-secondary: #34495e;
+            --color-bg: #f8f9fa;
+            --color-border: #dee2e6;
+            --color-shadow: rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--color-bg);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container { 
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--color-shadow);
+        }
+
+        h1 {
+            color: var(--color-secondary);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        h2 {
+            color: var(--color-secondary);
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--color-primary);
+        }
+
+        h3 {
+            color: var(--color-secondary);
+            margin: 20px 0 15px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--color-shadow);
+        }
+
+        .btn-danger {
+            background: var(--color-danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: var(--color-danger-hover);
+        }
+
+        .btn-secondary {
+            background: #7f8c8d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #95a5a6;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .btn-export {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-export:hover {
+            background: #2980b9;
+        }
+
+        .admin-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 3px solid var(--color-border);
+        }
+
+        .admin-login, .admin-panel {
+            background: #ecf0f1;
+            padding: 25px;
+            border-radius: 8px;
+        }
+
+        .message {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 6px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+            display: block;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid var(--color-border);
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: var(--color-secondary);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background: #d5dbdb !important;
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--color-primary) 0%, #229954 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px var(--color-shadow);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .venta-item {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .venta-info {
+            flex: 1;
+        }
+
+        .venta-fecha {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .venta-producto {
+            font-weight: 600;
+            color: var(--color-secondary);
+        }
+
+        .venta-detalles {
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="app-container">
-    <div class="header">
-        <h1>☕ CAFETERÍA · CONTROL DE VENTAS</h1>
-        <p>Registro rápido para empleados · Panel privado para administración</p>
+<div class="container">
+    <h1>🍹 Sistema de Ventas - Tropifrescura</h1>
+    <p style="color: #7f8c8d; margin-bottom: 30px;">Registro de ventas y gestión de productos</p>
+
+    <!-- Sección de registro de ventas -->
+    <h2>📝 Registrar Nueva Venta</h2>
+    <div class="form-group">
+        <label for="categoria">Categoría:</label>
+        <select id="categoria" onchange="cargarProductos()">
+            <option value="">-- Selecciona una categoría --</option>
+        </select>
     </div>
-    <div class="main">
-        <!-- SECCIÓN EMPLEADO -->
-        <div class="seccion-empleado">
-            <h2>📋 Registrar venta</h2>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Categoría</label>
-                    <select id="categoria" onchange="cargarProductos()">
-                        <option value="">-- Selecciona --</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Producto</label>
-                    <select id="producto">
-                        <option value="">-- Primero elige categoría --</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Cantidad</label>
-                    <input type="number" id="cantidad" min="1" value="1">
-                </div>
-            </div>
-            <button class="btn-registrar" onclick="registrarVenta()">➕ Registrar venta</button>
-            <div id="mensaje" class="mensaje"></div>
+    <div class="form-group">
+        <label for="producto">Producto:</label>
+        <select id="producto">
+            <option value="">-- Primero elige una categoría --</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" id="cantidad" min="1" value="1">
+    </div>
+    <button class="btn-primary" onclick="registrarVenta()">✓ Registrar Venta</button>
+    <div id="mensaje" class="message"></div>
+
+    <!-- Sección de administración -->
+    <div class="admin-section">
+        <h2>🔐 Panel de Administración</h2>
+        
+        <div id="adminLogin" class="admin-login">
+            <label for="password">Contraseña de administrador:</label>
+            <input type="password" id="password" placeholder="Ingresa la contraseña">
+            <button class="btn-primary" onclick="loginAdmin()">Iniciar Sesión</button>
         </div>
 
-        <hr>
+        <div id="adminPanel" class="admin-panel" style="display:none;">
+            <div class="actions">
+                <button class="btn-secondary" onclick="cerrarSesion()">Cerrar Sesión</button>
+                <button class="btn-export" onclick="exportarCSV()">📊 Exportar a CSV</button>
+                <button class="btn-danger" onclick="reiniciarVentas()">🗑️ Eliminar Todas las Ventas</button>
+            </div>
 
-        <!-- SECCIÓN ADMINISTRADOR -->
-        <div id="adminWrapper">
-            <div id="adminLogin" class="admin-login">
-                <h2>🔐 Acceso administrador</h2>
-                <div class="form-row">
-                    <div class="form-group" style="flex:2;">
-                        <label>Contraseña</label>
-                        <input type="password" id="password" placeholder="Ingresa contraseña">
-                    </div>
-                    <div class="form-group" style="flex:1;">
-                        <label> </label>
-                        <button onclick="loginAdmin()">Ingresar</button>
-                    </div>
+            <!-- Estadísticas -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Ventas</div>
+                    <div class="stat-value" id="totalVentas">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Productos Vendidos</div>
+                    <div class="stat-value" id="totalProductos">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Ingresos Totales</div>
+                    <div class="stat-value" id="ingresosTotal">$0</div>
                 </div>
             </div>
-            <div id="adminPanel" class="admin-panel oculto">
-                <div class="flex-row">
-                    <h2 style="margin:0; flex:1;">📊 Resumen de ventas</h2>
-                    <button class="btn-cierre" onclick="cerrarSesion()">Cerrar sesión</button>
-                    <button class="btn-reset" onclick="reiniciarVentas()">Reiniciar ventas</button>
-                </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="cambiarTab('resumen')">📊 Resumen por Producto</button>
+                <button class="tab" onclick="cambiarTab('historial')">📜 Historial de Ventas</button>
+            </div>
+
+            <!-- Contenido de tabs -->
+            <div id="tabResumen" class="tab-content active">
                 <div id="resumenVentas"></div>
+            </div>
+
+            <div id="tabHistorial" class="tab-content">
+                <div id="historialVentas"></div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // ------------------------------------------------------------
-    // BASE DE DATOS DE PRODUCTOS (extraída del Excel)
-    // Se incluyen solo productos con Precio Final válido.
-    // ------------------------------------------------------------
+    // ==============================================================
+    // DATOS DE PRODUCTOS
+    // ==============================================================
     const productos = [
         // SMOOTHIES TROPICALES
-        { categoria: "SMOOTHIES TROPICALES", nombre: "Cítrico Sin Miedo", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "Cítrico Sin Miedo", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Atrevido", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Atrevido", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Buen Provecho", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Buen Provecho", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Cariñito", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Cariñito", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Enamorao", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Enamorao", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Madrugador", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Madrugador", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Suavecito", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "El Suavecito", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "Golpe de Sol", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "Golpe de Sol", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "La Apaga Calor", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "La Apaga Calor", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "La Finca Limpia", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "La Finca Limpia", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "La Fresquita del Patio", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "La Fresquita del Patio", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "La Refrescosa", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "La Refrescosa", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "La Tentación", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "La Tentación", tamaño: "16 oz", precio: 150 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "Sol de Mediodía", tamaño: "22 oz", precio: 200 },
-        { categoria: "SMOOTHIES TROPICALES", nombre: "Sol de Mediodía", tamaño: "16 oz", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Cítrico Sin Miedo", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Cítrico Sin Miedo", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Atrevido", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Atrevido", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Buen Provecho", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Buen Provecho", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Cariñito", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Cariñito", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Enamorao", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Enamorao", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Madrugador", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Madrugador", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Suavecito", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "El Suavecito", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Golpe de Sol", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Golpe de Sol", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Apaga Calor", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Apaga Calor", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Finca Limpia", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Finca Limpia", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Fresquita del Patio", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Fresquita del Patio", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Refrescosa", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Refrescosa", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Tentación", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "La Tentación", tamaño: "16", precio: 150 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Sol de Mediodía", tamaño: "22", precio: 200 },
+        { categoria: "SMOOTHIES TROPICALES", nombre: "Sol de Mediodía", tamaño: "16", precio: 150 },
 
         // TROPICALES Agua de coco
-        { categoria: "TROPICALES Agua de coco", nombre: "Cítrico Sin Miedo", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "Cítrico Sin Miedo", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Atrevido", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Atrevido", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Buen Provecho", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Buen Provecho", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Cariñito", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Cariñito", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Enamorao", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Enamorao", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Madrugador", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Madrugador", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Suavecito", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "El Suavecito", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "Golpe de Sol", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "Golpe de Sol", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "La Apaga Calor", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "La Apaga Calor", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "La Finca Limpia", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "La Finca Limpia", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "La Fresquita del Patio", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "La Fresquita del Patio", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "La Refrescosa", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "La Refrescosa", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "La Tentación", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "La Tentación", tamaño: "16 oz", precio: 180 },
-        { categoria: "TROPICALES Agua de coco", nombre: "Sol de Mediodía", tamaño: "22 oz", precio: 230 },
-        { categoria: "TROPICALES Agua de coco", nombre: "Sol de Mediodía", tamaño: "16 oz", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "Cítrico Sin Miedo", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "Cítrico Sin Miedo", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Atrevido", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Atrevido", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Buen Provecho", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Buen Provecho", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Cariñito", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Cariñito", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Enamorao", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Enamorao", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Madrugador", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Madrugador", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Suavecito", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "El Suavecito", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "Golpe de Sol", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "Golpe de Sol", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Apaga Calor", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Apaga Calor", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Finca Limpia", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Finca Limpia", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Fresquita del Patio", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Fresquita del Patio", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Refrescosa", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Refrescosa", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Tentación", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "La Tentación", tamaño: "16", precio: 180 },
+        { categoria: "TROPICALES Agua de coco", nombre: "Sol de Mediodía", tamaño: "22", precio: 230 },
+        { categoria: "TROPICALES Agua de coco", nombre: "Sol de Mediodía", tamaño: "16", precio: 180 },
 
-        // MILKSHAKES y derivados
+        // MILKSHAKES
         { categoria: "MILKSHAKES", nombre: "El Calorón", tamaño: "16 oz", precio: 300 },
         { categoria: "MILKSHAKES", nombre: "El Calorón", tamaño: "12 oz", precio: 260 },
         { categoria: "MILKSHAKES", nombre: "El niño grande", tamaño: "16 oz", precio: 300 },
@@ -212,7 +508,7 @@
         { categoria: "BATIDOS FUNCIONALES", nombre: "La Tranquila", tamaño: "16 oz", precio: 250 },
         { categoria: "BATIDOS FUNCIONALES", nombre: "La Tranquila", tamaño: "12 oz", precio: 170 },
 
-        // BEBIDAS ALCOHÓLICAS
+        // BEBIDAS ALCOHOLICA
         { categoria: "BEBIDAS ALCOHOLICA", nombre: "El Agrónomo", tamaño: "12 oz", precio: 250 },
         { categoria: "BEBIDAS ALCOHOLICA", nombre: "El prepa", tamaño: "12 oz", precio: 250 },
         { categoria: "BEBIDAS ALCOHOLICA", nombre: "Fresa Picante", tamaño: "12 oz", precio: 300 },
@@ -233,173 +529,250 @@
         { categoria: "BATIDOS CON YOGURT / HELADO", nombre: "La Verde Loca", tamaño: "12 oz", precio: 250 },
 
         // CAFÉ
-        { categoria: "CAFÉ", nombre: "CAFÉ", tamaño: "6 oz", precio: 25 },
-        { categoria: "CAFÉ", nombre: "CAFÉ", tamaño: "4 oz", precio: 20 },
+        { categoria: "CAFÉ", nombre: "CAFÉ", tamaño: "6 0z", precio: 25 },
+        { categoria: "CAFÉ", nombre: "CAFÉ", tamaño: "4 0z", precio: 20 },
 
         // TOSTADAS / SÁNDWICH
-        { categoria: "TOSTADAS / SÁNDWICH", nombre: "El Agrónomo", tamaño: "único", precio: 65 },
-        { categoria: "TOSTADAS / SÁNDWICH", nombre: "La Clásica del Colmado", tamaño: "único", precio: 55 },
+        { categoria: "TOSTADAS / SÁNDWICH", nombre: "El Agrónomo", tamaño: "/", precio: 65 },
+        { categoria: "TOSTADAS / SÁNDWICH", nombre: "La Clásica del Colmado", tamaño: "/", precio: 55 },
 
         // Quipe
-        { categoria: "Quipe", nombre: "El Campesino", tamaño: "único", precio: 45 },
+        { categoria: "Quipe", nombre: "El Campesino", tamaño: "/", precio: 45 },
 
-        // Pastelillos (tres variedades)
-        { categoria: "Pastelitos", nombre: "Caribeño Sabroso 1", tamaño: "único", precio: 35 },
-        { categoria: "Pastelitos", nombre: "Caribeño Sabroso 2", tamaño: "único", precio: 35 },
-        { categoria: "Pastelitos", nombre: "Caribeño Sabroso 3", tamaño: "único", precio: 35 },
+        // Pastelitos
+        { categoria: "Pastelitos 1", nombre: "Caribeño Sabroso", tamaño: "/", precio: 35 },
+        { categoria: "Pastelitos 2", nombre: "Caribeño Sabroso", tamaño: "/", precio: 35 },
+        { categoria: "Pastelitos 3", nombre: "Caribeño Sabroso", tamaño: "/", precio: 35 },
 
-        // Ensaladas (solo las que tienen precio)
-        { categoria: "Ensaladas", nombre: "BERRY TROPICANA", tamaño: "250g", precio: 100 },
-        { categoria: "Ensaladas", nombre: "FRESCURA CARIBEÑA", tamaño: "250g", precio: 100 },
-        { categoria: "Ensaladas", nombre: "TROPICAL DOMINICANAZA", tamaño: "340g", precio: 100 },
+        // Ensaladas
+        { categoria: "Ensaladas", nombre: "BERRY TROPICANA", tamaño: "250", precio: 100 },
+        { categoria: "Ensaladas", nombre: "FRESCURA CARIBEÑA", tamaño: "250", precio: 100 },
+        { categoria: "Ensaladas", nombre: "TROPICAL DOMINICANAZA", tamaño: "340", precio: 100 },
 
-        // Helados
-        { categoria: "Helado", nombre: "Vainilla Verde", tamaño: "bola", precio: 50 },
-        { categoria: "Helado", nombre: "Chocolate oscuro", tamaño: "bola", precio: 50 },
-        { categoria: "Helado", nombre: "Café del patio", tamaño: "bola", precio: 50 },
-        { categoria: "Helado", nombre: "CTC", tamaño: "bola", precio: 50 },
-        { categoria: "Helado", nombre: "SG", tamaño: "bola", precio: 50 },
-        { categoria: "Helado", nombre: "LCH", tamaño: "bola", precio: 50 },
+        // Helado
+        { categoria: "Helado", nombre: "Vainilla Verde", tamaño: "/", precio: 50 },
+        { categoria: "Helado", nombre: "Chocolate oscuro", tamaño: "/", precio: 50 },
+        { categoria: "Helado", nombre: "Café del patio", tamaño: "/", precio: 50 },
+        { categoria: "Helado", nombre: "CTC", tamaño: "/", precio: 50 },
+        { categoria: "Helado", nombre: "SG", tamaño: "/", precio: 50 },
+        { categoria: "Helado", nombre: "LCH", tamaño: "/", precio: 50 },
 
         // Helado con alcohol
-        { categoria: "Helado con alcohol", nombre: "Piñacoloco", tamaño: "copa", precio: 80 },
-        { categoria: "Helado con alcohol", nombre: "Mojito", tamaño: "copa", precio: 80 },
-        { categoria: "Helado con alcohol", nombre: "Fresa Brava", tamaño: "copa", precio: 80 },
-        { categoria: "Helado con alcohol", nombre: "Chinola Power", tamaño: "copa", precio: 80 },
-        { categoria: "Helado con alcohol", nombre: "Sandía picante", tamaño: "copa", precio: 80 },
+        { categoria: "Helado con alcohol", nombre: "Piñacoloco", tamaño: "/", precio: 80 },
+        { categoria: "Helado con alcohol", nombre: "Mojito", tamaño: "/", precio: 80 },
+        { categoria: "Helado con alcohol", nombre: "Fresa Brava", tamaño: "/", precio: 80 },
+        { categoria: "Helado con alcohol", nombre: "Chinola Power", tamaño: "/", precio: 80 },
+        { categoria: "Helado con alcohol", nombre: "Sandía picante", tamaño: "/", precio: 80 },
 
         // Postres
-        { categoria: "Postres", nombre: "Brownies", tamaño: "porción", precio: 60 },
-        { categoria: "Postres", nombre: "Croissants", tamaño: "unidad", precio: 20 },
-        { categoria: "Postres", nombre: "Pie", tamaño: "porción", precio: 50 },
-        { categoria: "Postres", nombre: "Galletas", tamaño: "unidad", precio: 30 },
-        { categoria: "Postres", nombre: "Donas", tamaño: "unidad", precio: 45 },
-        { categoria: "Postres", nombre: "Cupcakes", tamaño: "unidad", precio: 40 },
+        { categoria: "Postres", nombre: "Brownies", tamaño: "/", precio: 60 },
+        { categoria: "Postres", nombre: "Croissants", tamaño: "/", precio: 20 },
+        { categoria: "Postres", nombre: "Pie", tamaño: "/", precio: 50 },
+        { categoria: "Postres", nombre: "Galletas", tamaño: "/", precio: 30 },
+        { categoria: "Postres", nombre: "Donas", tamaño: "/", precio: 45 },
+        { categoria: "Postres", nombre: "Cupcakes", tamaño: "/", precio: 40 },
 
-        // Jugo natural
+        // Jugo
         { categoria: "Jugo", nombre: "Naranja", tamaño: "12 oz", precio: 75 },
 
         // Salsas
-        { categoria: "Salsa", nombre: "Salsa de ajo", tamaño: "porción", precio: 15 },
-        { categoria: "Salsa", nombre: "Salsa tártara", tamaño: "porción", precio: 10 },
+        { categoria: "Salsa", nombre: "Salsa de ajo", tamaño: "/", precio: 15 },
+        { categoria: "Salsa", nombre: "Salsa tártara", tamaño: "/", precio: 10 },
 
-        // Fresas de la finca (postre especial)
-        { categoria: "Postre", nombre: "Fresas de la finca", tamaño: "copa", precio: 170 }
+        // Postre especial
+        { categoria: "Postre", nombre: "Fresas de la finca", tamaño: "/", precio: 170 }
     ];
 
-    // ------------------------------------------------------------
-    // LÓGICA DE LA APLICACIÓN
-    // ------------------------------------------------------------
-    const STORAGE_KEY = 'cafeteria_ventas';
-    const ADMIN_PASSWORD = 'admin123';  // Cambia la contraseña aquí
+    // ==============================================================
+    // CONFIGURACIÓN
+    // ==============================================================
+    const STORAGE_KEY = 'tropifrescura_ventas';
+    const ADMIN_PASSWORD = 'admin123';
 
-    // Inicializar categorías en el select
+    // ==============================================================
+    // INICIALIZACIÓN
+    // ==============================================================
     window.onload = function() {
-        const categorias = [...new Set(productos.map(p => p.categoria))].sort();
-        const selectCat = document.getElementById('categoria');
-        categorias.forEach(cat => {
-            const opt = document.createElement('option');
-            opt.value = cat;
-            opt.textContent = cat;
-            selectCat.appendChild(opt);
-        });
-        actualizarResumenAdmin(); // por si ya hay ventas guardadas
+        cargarCategorias();
     };
 
-    // Cargar productos según categoría
+    function cargarCategorias() {
+        const categorias = [...new Set(productos.map(p => p.categoria))].sort();
+        const selectCategoria = document.getElementById('categoria');
+        categorias.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat;
+            option.textContent = cat;
+            selectCategoria.appendChild(option);
+        });
+    }
+
+    // ==============================================================
+    // GESTIÓN DE PRODUCTOS
+    // ==============================================================
     function cargarProductos() {
         const categoria = document.getElementById('categoria').value;
-        const selectProd = document.getElementById('producto');
-        selectProd.innerHTML = '<option value="">-- Selecciona producto --</option>';
+        const selectProducto = document.getElementById('producto');
+        selectProducto.innerHTML = '<option value="">-- Selecciona un producto --</option>';
+        
         if (!categoria) return;
 
         const filtrados = productos.filter(p => p.categoria === categoria);
         filtrados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        
         filtrados.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = JSON.stringify({
-                nombre: p.nombre,
-                tamaño: p.tamaño,
-                precio: p.precio
-            });
-            opt.textContent = `${p.nombre} (${p.tamaño}) · $${p.precio}`;
-            selectProd.appendChild(opt);
+            const option = document.createElement('option');
+            option.value = JSON.stringify({ nombre: p.nombre, tamaño: p.tamaño, precio: p.precio });
+            option.textContent = `${p.nombre} (${p.tamaño}) - $${p.precio}`;
+            selectProducto.appendChild(option);
         });
     }
 
-    // Registrar venta
+    // ==============================================================
+    // REGISTRO DE VENTAS
+    // ==============================================================
     function registrarVenta() {
         const categoria = document.getElementById('categoria').value;
         const productoSelect = document.getElementById('producto');
-        const cantidad = parseInt(document.getElementById('cantidad').value, 10);
-        const msgDiv = document.getElementById('mensaje');
+        const cantidad = parseInt(document.getElementById('cantidad').value);
 
         if (!categoria) {
-            mostrarMensaje('Selecciona una categoría', 'error');
+            mostrarMensaje('Debes seleccionar una categoría', 'error');
             return;
         }
         if (!productoSelect.value) {
-            mostrarMensaje('Selecciona un producto', 'error');
+            mostrarMensaje('Debes seleccionar un producto', 'error');
             return;
         }
         if (isNaN(cantidad) || cantidad < 1) {
-            mostrarMensaje('Cantidad inválida', 'error');
+            mostrarMensaje('La cantidad debe ser mayor a 0', 'error');
             return;
         }
 
-        const prodData = JSON.parse(productoSelect.value);
+        const producto = JSON.parse(productoSelect.value);
         const venta = {
+            id: Date.now() + Math.random(),
             producto: {
                 categoria: categoria,
-                nombre: prodData.nombre,
-                tamaño: prodData.tamaño,
-                precio: prodData.precio
+                nombre: producto.nombre,
+                tamaño: producto.tamaño,
+                precio: producto.precio
             },
             cantidad: cantidad,
+            total: cantidad * producto.precio,
             timestamp: new Date().toISOString()
         };
 
-        const ventas = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let ventas = obtenerVentas();
         ventas.push(venta);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(ventas));
+        guardarVentas(ventas);
 
-        mostrarMensaje('✅ Venta registrada', 'success');
+        mostrarMensaje('✓ Venta registrada correctamente', 'success');
         document.getElementById('cantidad').value = 1;
-        if (!document.getElementById('adminPanel').classList.contains('oculto')) {
-            actualizarResumenAdmin();
+        
+        if (document.getElementById('adminPanel').style.display === 'block') {
+            actualizarAdminPanel();
         }
     }
 
     function mostrarMensaje(texto, tipo) {
-        const msg = document.getElementById('mensaje');
-        msg.textContent = texto;
-        msg.className = `mensaje ${tipo}`;
+        const mensajeDiv = document.getElementById('mensaje');
+        mensajeDiv.textContent = texto;
+        mensajeDiv.className = `message ${tipo}`;
         setTimeout(() => {
-            msg.style.display = 'none';
-            msg.className = 'mensaje';
-        }, 2500);
+            mensajeDiv.className = 'message';
+        }, 3000);
     }
 
+    // ==============================================================
+    // GESTIÓN DE DATOS (localStorage)
+    // ==============================================================
+    function obtenerVentas() {
+        const ventas = localStorage.getItem(STORAGE_KEY);
+        return ventas ? JSON.parse(ventas) : [];
+    }
+
+    function guardarVentas(ventas) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(ventas));
+    }
+
+    function eliminarVenta(ventaId) {
+        if (!confirm('¿Estás seguro de eliminar esta venta?')) return;
+        
+        let ventas = obtenerVentas();
+        ventas = ventas.filter(v => v.id !== ventaId);
+        guardarVentas(ventas);
+        
+        actualizarAdminPanel();
+        mostrarMensaje('✓ Venta eliminada', 'success');
+    }
+
+    function reiniciarVentas() {
+        if (!confirm('⚠️ ¿Estás seguro de eliminar TODAS las ventas registradas?\n\nEsta acción no se puede deshacer.')) return;
+        
+        localStorage.removeItem(STORAGE_KEY);
+        actualizarAdminPanel();
+        alert('✓ Todas las ventas han sido eliminadas');
+    }
+
+    // ==============================================================
     // ADMINISTRACIÓN
+    // ==============================================================
     function loginAdmin() {
         const pwd = document.getElementById('password').value;
         if (pwd === ADMIN_PASSWORD) {
-            document.getElementById('adminLogin').classList.add('oculto');
-            document.getElementById('adminPanel').classList.remove('oculto');
-            actualizarResumenAdmin();
+            document.getElementById('adminLogin').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            actualizarAdminPanel();
         } else {
-            alert('Contraseña incorrecta');
+            alert('❌ Contraseña incorrecta');
         }
     }
 
     function cerrarSesion() {
-        document.getElementById('adminLogin').classList.remove('oculto');
-        document.getElementById('adminPanel').classList.add('oculto');
+        document.getElementById('adminLogin').style.display = 'block';
+        document.getElementById('adminPanel').style.display = 'none';
         document.getElementById('password').value = '';
     }
 
-    function actualizarResumenAdmin() {
-        const ventas = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    function cambiarTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        if (tab === 'resumen') {
+            document.querySelector('.tab:nth-child(1)').classList.add('active');
+            document.getElementById('tabResumen').classList.add('active');
+        } else if (tab === 'historial') {
+            document.querySelector('.tab:nth-child(2)').classList.add('active');
+            document.getElementById('tabHistorial').classList.add('active');
+        }
+    }
+
+    function actualizarAdminPanel() {
+        actualizarEstadisticas();
+        actualizarResumenVentas();
+        actualizarHistorialVentas();
+    }
+
+    // ==============================================================
+    // ESTADÍSTICAS
+    // ==============================================================
+    function actualizarEstadisticas() {
+        const ventas = obtenerVentas();
+        const totalVentas = ventas.length;
+        const totalProductos = ventas.reduce((sum, v) => sum + v.cantidad, 0);
+        const ingresosTotal = ventas.reduce((sum, v) => sum + v.total, 0);
+
+        document.getElementById('totalVentas').textContent = totalVentas;
+        document.getElementById('totalProductos').textContent = totalProductos;
+        document.getElementById('ingresosTotal').textContent = `$${ingresosTotal.toFixed(2)}`;
+    }
+
+    // ==============================================================
+    // RESUMEN POR PRODUCTO
+    // ==============================================================
+    function actualizarResumenVentas() {
+        const ventas = obtenerVentas();
         const resumen = {};
 
         ventas.forEach(v => {
@@ -415,34 +788,108 @@
                 };
             }
             resumen[key].cantidad += v.cantidad;
-            resumen[key].ingreso += v.cantidad * v.producto.precio;
+            resumen[key].ingreso += v.total;
         });
 
-        let html = '<table><tr><th>Categoría</th><th>Producto</th><th>Tamaño</th><th>Precio</th><th>Cantidad</th><th>Ingreso</th></tr>';
-        let totalGlobal = 0;
-        const sorted = Object.values(resumen).sort((a,b) => a.categoria.localeCompare(b.categoria));
+        let html = '<table><thead><tr><th>Categoría</th><th>Producto</th><th>Tamaño</th><th>Precio Unit.</th><th>Cant. Vendida</th><th>Ingreso Total</th></tr></thead><tbody>';
+        
+        const sorted = Object.values(resumen).sort((a, b) => b.ingreso - a.ingreso);
+        let totalGeneral = 0;
+        
         sorted.forEach(item => {
             html += `<tr>
                 <td>${item.categoria}</td>
-                <td>${item.nombre}</td>
+                <td><strong>${item.nombre}</strong></td>
                 <td>${item.tamaño}</td>
                 <td>$${item.precio.toFixed(2)}</td>
                 <td>${item.cantidad}</td>
-                <td>$${item.ingreso.toFixed(2)}</td>
+                <td><strong>$${item.ingreso.toFixed(2)}</strong></td>
             </tr>`;
-            totalGlobal += item.ingreso;
+            totalGeneral += item.ingreso;
         });
-        html += `<tr class="total-row"><td colspan="5"><strong>TOTAL GENERAL</strong></td><td><strong>$${totalGlobal.toFixed(2)}</strong></td></tr>`;
-        html += '</table>';
+        
+        html += `<tr class="total-row"><td colspan="5">TOTAL GENERAL</td><td>$${totalGeneral.toFixed(2)}</td></tr>`;
+        html += '</tbody></table>';
+        
         document.getElementById('resumenVentas').innerHTML = html;
     }
 
-    function reiniciarVentas() {
-        if (confirm('¿Eliminar TODAS las ventas registradas?')) {
-            localStorage.removeItem(STORAGE_KEY);
-            actualizarResumenAdmin();
-            alert('Ventas reiniciadas');
+    // ==============================================================
+    // HISTORIAL DE VENTAS
+    // ==============================================================
+    function actualizarHistorialVentas() {
+        const ventas = obtenerVentas();
+        
+        if (ventas.length === 0) {
+            document.getElementById('historialVentas').innerHTML = '<p style="text-align:center; color:#7f8c8d; padding:40px;">No hay ventas registradas</p>';
+            return;
         }
+
+        const ventasOrdenadas = ventas.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        let html = '';
+        ventasOrdenadas.forEach(v => {
+            const fecha = new Date(v.timestamp);
+            const fechaFormato = fecha.toLocaleDateString('es-DO', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            html += `
+                <div class="venta-item">
+                    <div class="venta-info">
+                        <div class="venta-fecha">${fechaFormato}</div>
+                        <div class="venta-producto">${v.producto.nombre} (${v.producto.tamaño})</div>
+                        <div class="venta-detalles">
+                            ${v.producto.categoria} • 
+                            Cantidad: ${v.cantidad} • 
+                            Precio: $${v.producto.precio} • 
+                            <strong>Total: $${v.total.toFixed(2)}</strong>
+                        </div>
+                    </div>
+                    <button class="btn-danger btn-small" onclick="eliminarVenta(${v.id})">🗑️ Eliminar</button>
+                </div>
+            `;
+        });
+        
+        document.getElementById('historialVentas').innerHTML = html;
+    }
+
+    // ==============================================================
+    // EXPORTAR A CSV
+    // ==============================================================
+    function exportarCSV() {
+        const ventas = obtenerVentas();
+        
+        if (ventas.length === 0) {
+            alert('No hay ventas para exportar');
+            return;
+        }
+
+        let csv = 'Fecha,Hora,Categoría,Producto,Tamaño,Precio Unitario,Cantidad,Total\n';
+        
+        ventas.forEach(v => {
+            const fecha = new Date(v.timestamp);
+            const fechaStr = fecha.toLocaleDateString('es-DO');
+            const horaStr = fecha.toLocaleTimeString('es-DO');
+            
+            csv += `"${fechaStr}","${horaStr}","${v.producto.categoria}","${v.producto.nombre}","${v.producto.tamaño}",${v.producto.precio},${v.cantidad},${v.total}\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `ventas_tropifrescura_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 </script>
 </body>
